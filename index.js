@@ -31,14 +31,20 @@ const countries = [
 const options = [
 	"-t",	// today
 ];
-// one arg
 async function main() {
+	// one arg; either country or option
 	if (process.argv.length == 3) {
 		let arg = process.argv[2].toLowerCase()
 		// country
 		if (countries.indexOf(arg) >= 0) {
 			const data = await processCountryArgument(arg);
 			formatTable(data, null);
+		}
+		// overall
+		else if (arg == "-o") {
+			const response = await fetch(`https://corona.lmao.ninja/countries`);
+			const data = await response.json();
+			formatTable(data, arg)
 		}
 		// option
 		else if (options.indexOf(arg) >= 0) {
@@ -81,14 +87,35 @@ async function formatTable(data, option) {
 		console.log(t.toString());
 	}
 	// cases, deaths, recovered, critical
-	else {
+	else if (option == "-o") {
+		var totalCases = 0, totallDeaths = 0, totalRecovered = 0, totalCritical = 0;
+		data.map(element => {
+			totalCases += parseInt(element.cases);
+			totallDeaths += parseInt(element.deaths);
+			totalRecovered += parseInt(element.recovered);
+			totalCritical += parseInt(element.critical);
+		});
 		var t = new table({
-			head: [colors.red('Cases'), colors.red('Deaths'), colors.green('Recovered'), colors.yellow('Critical')],
-			colWidths: [17, 17, 17, 17],
+			head: [colors.red('Cases'), colors.red('Deaths'), colors.red('Death Rate'), colors.green('Recovered'), colors.yellow('Critical')],
+			colWidths: [13, 13, 15, 15, 15],
 			chars: charFormatting
 		});
 		t.push(
-			[colors.white(data.cases), colors.white(data.deaths), colors.white(data.recovered), colors.white(data.critical)],
+			[colors.white(totalCases), colors.white(totallDeaths), colors.white((totallDeaths*100/totalCases).toFixed(2).toString() + "%"), colors.white(totalRecovered), colors.white(totalCritical)],
+		);
+		process.stdout.write('\033c');
+		console.log("Here are the latest Corona Virus stats for " + data.country +  ", courtesy of Worldometers:");
+		console.log(t.toString());
+	}
+	// cases, deaths, recovered, critical
+	else {
+		var t = new table({
+			head: [colors.red('Cases'), colors.red('Deaths'), colors.red('Death Rate'), colors.green('Recovered'), colors.yellow('Critical')],
+			colWidths: [13, 13, 15, 15, 15],
+			chars: charFormatting
+		});
+		t.push(
+			[colors.white(data.cases), colors.white(data.deaths), colors.white((data.deaths*100/data.cases).toFixed(2).toString() + "%"), colors.white(data.recovered), colors.white(data.critical)],
 		);
 		process.stdout.write('\033c');
 		console.log("Here are the latest Corona Virus stats for " + data.country +  ", courtesy of Worldometers:");
