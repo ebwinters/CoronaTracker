@@ -34,7 +34,7 @@ const options = [
 // one arg
 async function main() {
 	if (process.argv.length == 3) {
-		let arg = process.argv[2]
+		let arg = process.argv[2].toLowerCase()
 		// country
 		if (countries.indexOf(arg) >= 0) {
 			const data = await processCountryArgument(arg);
@@ -49,10 +49,10 @@ async function main() {
 	}
 	// two args; country and option
 	else if (process.argv.length == 4) {
-		let arg = process.argv[2]
+		let arg = process.argv[2].toLowerCase()
 		if (countries.indexOf(arg) >= 0){
 			const data = await processCountryArgument(arg);
-			let arg2 = process.argv[3];
+			let arg2 = process.argv[3].toLowerCase();
 			formatTable(data, arg2);
 		}
 		else console.log("Invalid argument")
@@ -60,35 +60,31 @@ async function main() {
 }
 
 async function processCountryArgument(arg) {
-	fetch('https://corona.lmao.ninja/countries/arg')
-	.then((response) => {
-    	return response.json();
-  	})
-  	.then((data) => {
-		return data
-	});
+	const response = await fetch(`https://corona.lmao.ninja/countries/${arg}`);
+	const data = await response.json();
+	return data;
 }
 
-function formatTable(data, option) {
+async function formatTable(data, option) {
 	// today cases, today deaths
 	if (option == "-t") {
 		var t = new table({
-			head: [colors.red('Today Cases'), colors.red('Today Deaths')],
-			colWidths: [15, 15],
+			head: [colors.red('Today\'s new Cases'), colors.red('Today\'s Deaths')],
+			colWidths: [22, 20],
 			chars: charFormatting
 		});
 		t.push(
 			[colors.white(data.todayCases), colors.white(data.todayDeaths)],
 		);
 		process.stdout.write('\033c');
-		console.log("Here are the latest Corona Virus stats for " + data.country +  ", courtesy of Worldometers:");
+		console.log("Here are the latest data for Corona Virus today in " + data.country +  ", courtesy of Worldometers:");
 		console.log(t.toString());
 	}
 	// cases, deaths, recovered, critical
 	else {
 		var t = new table({
 			head: [colors.red('Cases'), colors.red('Deaths'), colors.green('Recovered'), colors.yellow('Critical')],
-			colWidths: [15, 15, 15, 15],
+			colWidths: [17, 17, 17, 17],
 			chars: charFormatting
 		});
 		t.push(
