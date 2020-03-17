@@ -1,7 +1,7 @@
 {
   "name": "@ebwinters/coronatrack",
   "bin": "./index.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -15,5 +15,7 @@
     "colors": "^1.4.0",
     "node-fetch": "^2.6.0"
   },
-  "publishConfig": { "registry": "https://npm.pkg.github.com/" }
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  }
 }
