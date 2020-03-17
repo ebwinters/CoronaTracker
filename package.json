@@ -1,5 +1,5 @@
 {
-  "name": "coronatrack",
+  "name": "@ebwinters/coronatrack",
   "bin": "./index.js",
   "version": "1.0.1",
   "description": "",
@@ -14,5 +14,6 @@
     "cli-table": "^0.3.1",
     "colors": "^1.4.0",
     "node-fetch": "^2.6.0"
-  }
+  },
+  "publishConfig": { "registry": "https://npm.pkg.github.com/" }
 }
