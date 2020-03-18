@@ -7,6 +7,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+  	"type": "git",
+  	"url": "https://github.com/ebwinters/CoronaTracker" 
+  },
   "keywords": [],
   "author": "Ethan Winters",
   "license": "ISC",
