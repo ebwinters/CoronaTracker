@@ -11,7 +11,7 @@
     "type": "git",
     "url": "https://github.com/ebwinters/CoronaTracker"
   },
-  "keywords": [],
+  "keywords": ["corona", "virus", "corona virus", "statistics"],
   "author": "Ethan Winters",
   "license": "ISC",
   "dependencies": {

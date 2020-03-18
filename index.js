@@ -2,6 +2,7 @@
 const fetch = require("node-fetch");
 const table = require('cli-table');
 var colors = require('colors');
+
 const charFormatting = { 
 	'top': colors.white('='), 'top-mid': colors.white('╤') , 'top-left': colors.white('╔') , 'top-right': colors.white('╗'),
 	'bottom': colors.white('═') , 'bottom-mid': colors.white('╧') , 'bottom-left': colors.white('╚') , 'bottom-right': colors.white('╝'),
@@ -31,6 +32,7 @@ const countries = [
 const options = [
 	"-t",	// today
 ];
+
 async function main() {
 	// one arg; either country or option
 	if (process.argv.length == 3) {
@@ -123,4 +125,4 @@ async function formatTable(data, option) {
 	}
 }
 
-main()
+main();
