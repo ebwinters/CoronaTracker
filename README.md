@@ -11,4 +11,4 @@ ex: `coronatrack usa` `coronatrack china`
 `coronatrack countryName -t`
 ex: `coronatrack China -t` `coronatrack Russia -t`
 ### Overall global
-`coronatrack -o
+`coronatrack -o`
