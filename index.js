@@ -65,6 +65,9 @@ async function main() {
 		}
 		else console.log("Invalid argument")
 	}
+	else {
+		console.log("Add a country or an option. Check https://github.com/ebwinters/CoronaTracker for instructions.")
+	}
 }
 
 async function processCountryArgument(arg) {
