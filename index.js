@@ -31,7 +31,7 @@ const countries = [
 ];
 const options = [
 	"-t",	// today
-	"-n"	//new cases
+	"--help",	// help
 ];
 
 async function main() {
@@ -60,13 +60,16 @@ async function main() {
 				};
 				formatTable(data, arg)
 			}
-			if (arg == "-n") {
-				// sort endpoint new cases
+			if (arg == "--help") {
+				process.stdout.write('\033c');
+				console.log(colors.white("coronatrack:"), colors.red("information on global deaths, death rate, cases, and recovered"));
+				console.log(colors.white("coronatrack {countryName}:"), colors.red("death, death rate, cases, and recovered information for a specific country"));
+				console.log(colors.white("coronatrack -t:"), colors.red("new cases and new deaths. Can be added after countryname arg as well"));
 			}
 		}
 		else console.log("Invalid argument");
 	}
-	// two args; country and option
+	// two args; country and option or state
 	else if (process.argv.length == 4) {
 		let arg = process.argv[2].toLowerCase()
 		if (countries.indexOf(arg) >= 0){
