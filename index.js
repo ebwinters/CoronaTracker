@@ -2,37 +2,11 @@
 const fetch = require("node-fetch");
 const table = require('cli-table');
 var colors = require('colors');
+const constants = require('./constants');
 
-const charFormatting = { 
-	'top': colors.white('='), 'top-mid': colors.white('╤') , 'top-left': colors.white('╔') , 'top-right': colors.white('╗'),
-	'bottom': colors.white('═') , 'bottom-mid': colors.white('╧') , 'bottom-left': colors.white('╚') , 'bottom-right': colors.white('╝'),
-	'left': colors.white('║') , 'left-mid': colors.white('╟') , 'mid': colors.white('─') , 'mid-mid': colors.white('┼'),
-	'right': colors.white('║') , 'right-mid': colors.white('╢') , 'middle': colors.white('│')
-};
-const countries = [
-	"china", "italy", "iran", "spain", "germany", "s. korea", "france", "usa", "switzerland", "uk",
-	"netherlands", "norway", "austria", "belgium", "sweden", "denmark", "japan", "diamond princess",
-	"malaysia", "canada", "australia", "portugal", "qatar", "czechia", "greece", "israel", "finland",
-	"brazil", "ireland", "slovenia", "singapore", "pakistan", "bahrain", "iceland", "poland", "estonia",
-	"romania", "chile", "egypt", "philippines", "thailand", "indonesia", "saudi arabia", "hong kong", "iraq",
-	"india", "luxembourg", "kuwait", "lebanon", "san marino", "peru", "russia", "ecuador", "uae", "slovakia", "mexico",
-	"bulgaria", "armenia", "taiwan", "serbia", "panama", "croatia", "argentina", "vietnam", "colombia", "south africa",
-	"algeria", "latvia", "brunei", "albania", "hungary", "cyprus", "faeroe islands", "turkey", "morocco", "sri lanka",
-	"costa rica", "palestine", "jordan", "andorra", "malta", "belarus", "azerbaijan", "georgia", "cambodia", "kazakhstan",
-	"venezuela", "north macedonia", "moldova", "uruguay", "senegal", "bosnia and herzegovina", "lithuania", "oman", "tunisia",
-	"afghanistan", "dominican republic", "liechtenstein", "martinique", "burkina faso", "ukraine", "macao", "maldives",
-	"new zealand", "jamaica", "bolivia", "french guiana", "uzbekistan", "bangladesh", "cameroon", "monaco",
-	"paraguay", "réunion", "guatemala", "honduras", "guyana", "ghana", "rwanda", "channel islands", "ethiopia",
-	"guadeloupe", "cuba", "guam", "mongolia", "puerto rico", "trinidad and tobago", "ivory coast", "kenya", "seychelles",
-	"nigeria", "aruba", "curaçao", "drc", "french polynesia", "gibraltar", "st. barth", "barbados", "liberia", "montenegro",
-	"namibia", "saint lucia", "saint martin", "u.s. virgin islands", "cayman islands", "sudan", "nepal", "antigua and barbuda",
-	"bahamas", "benin", "bhutan", "car", "congo", "equatorial guinea", "gabon", "greenland", "guinea", "vatican city",
-	"mauritania", "mayotte", "st. vincent grenadines", "somalia", "suriname", "eswatini", "tanzania", "togo"
-];
-const options = [
-	"-t",	// today
-	"--help",	// help
-];
+let options = constants.options, countries = constants.countries, charFormatting = constants.charFormatting, statesMap = constants.statesMap; 
+
+
 
 async function main() {
 	// one arg; either country or option
@@ -42,6 +16,12 @@ async function main() {
 		if (countries.indexOf(arg) >= 0) {
 			const data = await processCountryArgument(arg);
 			formatTable(data, null);
+		}
+		else if (statesMap.filter(element => element.abbreviation == arg).length > 0) {
+			const stateName = statesMap.filter(element => element.abbreviation == arg)[0].name;
+			const data = await processAllStates();
+			const stateData = getStateData(data, stateName);
+			formatTable(stateData, null)
 		}
 		// option
 		else if (options.indexOf(arg) >= 0) {
@@ -77,11 +57,19 @@ async function main() {
 			let arg2 = process.argv[3].toLowerCase();
 			formatTable(data, arg2);
 		}
+		else if (statesMap.filter(element => element.abbreviation == arg).length > 0) {
+			let arg2 = process.argv[3].toLowerCase();
+			const stateName = statesMap.filter(element => element.abbreviation == arg)[0].name;
+			const data = await processAllStates();
+			const stateData = getStateData(data, stateName);
+			formatTable(stateData, arg2)
+		}
 		else console.log("Invalid argument")
 	}
 	else {
 		const response = await fetch(`https://corona.lmao.ninja/all`);
 		const data = await response.json();
+		data.country = "general";
 		formatTable(data, null)
 	}
 }
@@ -98,6 +86,22 @@ async function processAllCountries() {
 	return data;
 }
 
+async function processAllStates() {
+	const response = await fetch(`https://corona.lmao.ninja/states`);
+	const data = await response.json();
+	return data;
+}
+
+function getStateData(allData, arg) {
+	const stateData = allData.filter(element => {
+		return element.state.toLowerCase() == arg
+	});
+	if (stateData.length !== 1) {
+		throw("incorrect state argument. Make sure to spell correctly.")
+	}
+	else return stateData[0];
+}
+
 async function formatTable(data, option) {
 	// today cases, today deaths
 	if (option == "-t") {
@@ -110,7 +114,7 @@ async function formatTable(data, option) {
 			[colors.white(data.todayCases), colors.white(data.todayDeaths)],
 		);
 		process.stdout.write('\033c');
-		console.log("Here is the latest data for Corona Virus today in " + data.country +  ", courtesy of Worldometers:");
+		console.log("Here is the latest data for Corona Virus today in " + (data.country || data.state) +  ", courtesy of Worldometers:");
 		console.log(t.toString());
 	}
 	// cases, deaths, recovered, critical
@@ -124,9 +128,11 @@ async function formatTable(data, option) {
 			[colors.white(data.cases), colors.white(data.deaths), colors.white((data.deaths*100/data.cases).toFixed(2).toString() + "%"), colors.white(data.recovered)],
 		);
 		process.stdout.write('\033c');
-		console.log("Here are the latest Corona Virus stats, courtesy of Worldometers:");
+		console.log("Here are the latest Corona Virus stats in " + (data.country || data.state) + ", courtesy of Worldometers:");
 		console.log(t.toString());
 	}
 }
 
 main();
+
+
