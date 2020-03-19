@@ -42,9 +42,10 @@ async function main() {
 			}
 			if (arg == "--help") {
 				process.stdout.write('\033c');
-				console.log(colors.white("coronatrack:"), colors.red("information on global deaths, death rate, cases, and recovered"));
-				console.log(colors.white("coronatrack {countryName}:"), colors.red("death, death rate, cases, and recovered information for a specific country"));
-				console.log(colors.white("coronatrack -t:"), colors.red("new cases and new deaths. Can be added after countryname arg as well"));
+				console.log(colors.green("coronatrack:"), colors.white("information on global deaths, death rate, cases, and recovered"));
+				console.log(colors.green("coronatrack {countryName}:"), colors.white("death, death rate, cases, and recovered information for a specific country"));
+				console.log(colors.green("coronatrack {stateName}:"), colors.white("death, death rate, cases, and recovered information for a specific state"));
+				console.log(colors.green("coronatrack -t:"), colors.white("new cases and new deaths. Can be added after countryname/statename arg as well"));
 			}
 		}
 		else console.log("Invalid argument");
