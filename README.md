@@ -9,7 +9,12 @@ There are different ways to view data with coronatrack. You can view by country,
 ### By country
 `coronatrack countryName` gives you death, death rate, cases, and recovered information for a specific country.
 ex: `coronatrack usa` `coronatrack china`
+### By state
+`coronatrack countryName` gives you death, death rate, cases, and recovered information for a specific state.
+ex: `coronatrack il` `coronatrack nj`
 ### By today
-`coronatrack countryName -t`gives you new cases and new deaths for a specific country, or overall.
-ex: `coronatrack china -t` `coronatrack -t` `coronatrack Russia -t`
+`coronatrack countryName -t`gives you new cases and new deaths for a specific country, state, or overall.
+ex: `coronatrack china -t` `coronatrack -t` `coronatrack ny -t`
+### Help
+`coronatrack --help` gives you a full list of commands.
 
