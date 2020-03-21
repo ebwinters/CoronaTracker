@@ -44,9 +44,16 @@ function getStateData(allData, arg) {
 		return element.state.toLowerCase() == arg
 	});
 	if (stateData.length !== 1) {
-		throw("incorrect state argument. Make sure to spell correctly.")
+		throw("invalid argument try coronacheck --help")
 	}
 	else return stateData[0];
+}
+
+function checkArg(arg) {
+	if (options.indexOf(arg) < 0) {
+		console.log("invalid argument try coronacheck --help");
+		process.exit(1)
+	}
 }
 
 function graphData(allHistoricalData, arg, place=null) {
@@ -68,8 +75,15 @@ function graphData(allHistoricalData, arg, place=null) {
 		});
 	}
 	// country given
-	else if (countries.indexOf(arg) >= 0) {
-
+	else if (countries.indexOf(place) >= 0 || place == "us") {
+		// const countryData = allHistoricalData.filter(element => {
+		// 	if (element.country) {
+		// 		return element.country.toLowerCase() == place;
+		// 	}
+		// });
+		// console.log(countryData);
+		console.log("graphing capabilities for countries are coming soon!");
+		process.exit(1);
 	}
 	// no place arg, overall
 	else {
@@ -103,6 +117,7 @@ async function main() {
 		}
 		// overall option
 		else if (options.indexOf(arg) >= 0) {
+			checkArg(arg);
 			if (arg == "-t") {
 				//go thru all countries and tally new cases
 				const data0 = await processAllCountries();
@@ -134,9 +149,18 @@ async function main() {
 		// country with option
 		if (countries.indexOf(arg) >= 0){
 			const data = await processCountryArgument(arg);
-			// TODO -G
 			let arg2 = process.argv[3].toLowerCase();
-			formatTable(data, arg2);
+			// make sure arg2 valid
+			checkArg(arg2);
+			// -g
+			if (arg2[0] == "-" && arg2[1] == "g") {
+				const allHistoricalData = await processAllHistoricalData();
+				graphData(allHistoricalData.slice(1), arg2[2], arg == "usa" ? "us" : arg)
+			}
+			// other options
+			else {
+				formatTable(data, arg2);
+			}
 		}
 		// state with option
 		else if (statesMap.filter(element => element.abbreviation == arg).length > 0) {
@@ -144,7 +168,6 @@ async function main() {
 			const stateName = statesMap.filter(element => element.abbreviation == arg)[0].name;
 			// -g
 			if (arg2[0] == "-" && arg2[1] == "g") {
-				// processAllHistoricalDat
 				const allHistoricalData = await processAllHistoricalData();
 				graphData(allHistoricalData.slice(1), arg2[2], stateName)
 			}
@@ -156,7 +179,7 @@ async function main() {
 			}
 			
 		}
-		else console.log("Invalid argument")
+		else console.log("invalid argument try coronacheck --help")
 	}
 	else {
 		const response = await fetch(`https://corona.lmao.ninja/all`);
