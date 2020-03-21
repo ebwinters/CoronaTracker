@@ -1,6 +1,6 @@
 var colors = require('colors');
 const constants = require('./constants');
-let options = constants.options;
+let options = constants.options, statesMap = constants.statesMap;
 
 /**
  * Filters data for a specific state
@@ -33,7 +33,8 @@ function outputHelpMenu() {
 	console.log(colors.green("coronatrack:"), colors.white("information on global deaths, death rate, cases, and recovered"));
 	console.log(colors.green("coronatrack {countryName}:"), colors.white("death, death rate, cases, and recovered information for a specific country"));
 	console.log(colors.green("coronatrack {stateName}:"), colors.white("death, death rate, cases, and recovered information for a specific state"));
-	console.log(colors.green("coronatrack -t:"), colors.white("new cases and new deaths. Can be added after countryname/statename arg as well"));
+    console.log(colors.green("coronatrack -t:"), colors.white("new cases and new deaths. Can be added after countryname/statename arg as well"));
+    console.log(colors.green("coronatrack -gd/-gc/-gr:"), colors.white("graphs for deaths/cases/recoveries. Can be added after countryname/statename arg as well"));
 }
 
 /**
