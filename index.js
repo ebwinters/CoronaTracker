@@ -64,7 +64,7 @@ function graphData(allHistoricalData, arg, place=null) {
 		new Array(59).fill(0);
 
 	// state given
-	if (statesMap.filter(element => element.name == place).length > 0) {
+	if (statesMap.filter(element => element.name.toLowerCase() == place).length > 0) {
 		const stateData = allHistoricalData.filter(element => {
 			if (element.province) {
 				return element.province.toLowerCase() == place;
