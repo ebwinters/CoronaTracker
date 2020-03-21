@@ -1,60 +1,12 @@
 #!/usr/bin/env node
-const fetch = require("node-fetch");
 const table = require('cli-table');
 const asciichart = require ('asciichart')
 var colors = require('colors');
 const constants = require('./constants');
+const apiCalls = require('./apiCalls');
+const helpers = require('./helpers');
 
 let options = constants.options, countries = constants.countries, charFormatting = constants.charFormatting, statesMap = constants.statesMap; 
-
-function outputHelpMenu() {
-	console.log("");
-	console.log(colors.green("coronatrack:"), colors.white("information on global deaths, death rate, cases, and recovered"));
-	console.log(colors.green("coronatrack {countryName}:"), colors.white("death, death rate, cases, and recovered information for a specific country"));
-	console.log(colors.green("coronatrack {stateName}:"), colors.white("death, death rate, cases, and recovered information for a specific state"));
-	console.log(colors.green("coronatrack -t:"), colors.white("new cases and new deaths. Can be added after countryname/statename arg as well"));
-}
-
-async function processCountryArgument(arg) {
-	const response = await fetch(`https://corona.lmao.ninja/countries/${arg}`);
-	const data = await response.json();
-	return data;
-}
-
-async function processAllCountries() {
-	const response = await fetch(`https://corona.lmao.ninja/countries`);
-	const data = await response.json();
-	return data;
-}
-
-async function processAllStates() {
-	const response = await fetch(`https://corona.lmao.ninja/states`);
-	const data = await response.json();
-	return data;
-}
-
-async function processAllHistoricalData() {
-	const response = await fetch(`https://corona.lmao.ninja/historical`);
-	const data = await response.json();
-	return data;
-}
-
-function getStateData(allData, arg) {
-	const stateData = allData.filter(element => {
-		return element.state.toLowerCase() == arg
-	});
-	if (stateData.length !== 1) {
-		throw("invalid argument try coronacheck --help")
-	}
-	else return stateData[0];
-}
-
-function checkArg(arg) {
-	if (options.indexOf(arg) < 0) {
-		console.log("invalid argument try coronacheck --help");
-		process.exit(1)
-	}
-}
 
 function graphData(allHistoricalData, arg, place=null) {
 	const specifier = {"c": "cases", "d": "deaths", "r": "recovered"}[arg];
@@ -81,7 +33,13 @@ function graphData(allHistoricalData, arg, place=null) {
 		// 		return element.country.toLowerCase() == place;
 		// 	}
 		// });
-		// console.log(countryData);
+		console.log(countryData);
+		const countryData = allHistoricalData.filter(element => {
+			if (element.province) {
+				return element.province.toLowerCase() == "us";
+			}
+		});
+		console.log(countryData);
 		console.log("graphing capabilities for countries are coming soon!");
 		process.exit(1);
 	}
@@ -94,7 +52,6 @@ function graphData(allHistoricalData, arg, place=null) {
 			});
 		}
 	}
-
 	console.log(asciichart.plot(chartData, {height: 22}))
 	console.log(`            Data on ${specifier} in ${place != null ? place : ""} the last 60 days`);
 }
@@ -105,36 +62,27 @@ async function main() {
 		let arg = process.argv[2].toLowerCase()
 		// overall country
 		if (countries.indexOf(arg) >= 0) {
-			const data = await processCountryArgument(arg);
+			const data = await apiCalls.processCountryData(arg);
 			formatTable(data, null);
 		}
 		// overall state
-		else if (statesMap.filter(element => element.abbreviation == arg).length > 0) {
+		else if (helpers.isValidState(arg)) {
 			const stateName = statesMap.filter(element => element.abbreviation == arg)[0].name;
-			const data = await processAllStates();
-			const stateData = getStateData(data, stateName);
+			const data = await apiCalls.processAllStates();
+			const stateData = helpers.getStateData(data, stateName);
 			formatTable(stateData, null)
 		}
 		// overall option
 		else if (options.indexOf(arg) >= 0) {
-			checkArg(arg);
+			helpers.checkArg(arg);
 			if (arg == "-t") {
-				//go thru all countries and tally new cases
-				const data0 = await processAllCountries();
-				var todayCases = 0, todayDeaths = 0, country = "all countries";
-				data0.map(element => {
-					todayCases += parseInt(element.todayCases);
-					todayDeaths += parseInt(element.todayDeaths);
-				});
-				let data = {
-					todayCases,
-					todayDeaths,
-					country
-				};
+				//go through all countries and tally new cases/deaths
+				const data0 = await apiCalls.processAllCountries();
+				const data = helpers.calculateGlobalToday(data0);
 				formatTable(data, arg)
 			}
 			if (arg[0] == "-" && arg[1] == "g") {
-				const allHistoricalData = await processAllHistoricalData();
+				const allHistoricalData = await apiCalls.processAllHistoricalData();
 				graphData(allHistoricalData.slice(1), arg[2])	
 			}
 			if (arg == "--help") {
@@ -142,19 +90,19 @@ async function main() {
 			}
 		}
 		else console.log("Invalid argument. For help type coronatrack --help");
-	}	
+	}
 	// two args; country and option or state
 	else if (process.argv.length == 4) {
 		let arg = process.argv[2].toLowerCase()
 		// country with option
 		if (countries.indexOf(arg) >= 0){
-			const data = await processCountryArgument(arg);
+			const data = await apiCalls.processCountryData(arg);
 			let arg2 = process.argv[3].toLowerCase();
 			// make sure arg2 valid
-			checkArg(arg2);
+			helpers.checkArg(arg2);
 			// -g
 			if (arg2[0] == "-" && arg2[1] == "g") {
-				const allHistoricalData = await processAllHistoricalData();
+				const allHistoricalData = await apiCalls.processCountryHistoricalData(arg == "usa" ? "us" : arg);
 				graphData(allHistoricalData.slice(1), arg2[2], arg == "usa" ? "us" : arg)
 			}
 			// other options
@@ -163,18 +111,18 @@ async function main() {
 			}
 		}
 		// state with option
-		else if (statesMap.filter(element => element.abbreviation == arg).length > 0) {
+		else if (helpers.isValidState(arg)) {
 			let arg2 = process.argv[3].toLowerCase();
 			const stateName = statesMap.filter(element => element.abbreviation == arg)[0].name;
 			// -g
 			if (arg2[0] == "-" && arg2[1] == "g") {
-				const allHistoricalData = await processAllHistoricalData();
+				const allHistoricalData = await apiCalls.processAllHistoricalData();
 				graphData(allHistoricalData.slice(1), arg2[2], stateName.toLowerCase())
 			}
 			// other options
 			else {
-				const data = await processAllStates();
-				const stateData = getStateData(data, stateName);
+				const data = await apiCalls.processAllStates();
+				const stateData = helpers.getStateData(data, stateName);
 				formatTable(stateData, arg2)
 			}
 			
@@ -182,9 +130,7 @@ async function main() {
 		else console.log("invalid argument try coronacheck --help")
 	}
 	else {
-		const response = await fetch(`https://corona.lmao.ninja/all`);
-		const data = await response.json();
-		data.country = "general";
+		const data = await apiCalls.processAllData();
 		formatTable(data, null)
 	}
 }
