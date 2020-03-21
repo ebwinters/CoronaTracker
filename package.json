@@ -22,6 +22,7 @@
   "dependencies": {
     "asciichart": "^1.5.11",
     "colors": "^1.4.0",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "cli-table": "^0.3.1"
   }
 }
