@@ -7,6 +7,14 @@ const constants = require('./constants');
 
 let options = constants.options, countries = constants.countries, charFormatting = constants.charFormatting, statesMap = constants.statesMap; 
 
+function outputHelpMenu() {
+	console.log("");
+	console.log(colors.green("coronatrack:"), colors.white("information on global deaths, death rate, cases, and recovered"));
+	console.log(colors.green("coronatrack {countryName}:"), colors.white("death, death rate, cases, and recovered information for a specific country"));
+	console.log(colors.green("coronatrack {stateName}:"), colors.white("death, death rate, cases, and recovered information for a specific state"));
+	console.log(colors.green("coronatrack -t:"), colors.white("new cases and new deaths. Can be added after countryname/statename arg as well"));
+}
+
 async function processCountryArgument(arg) {
 	const response = await fetch(`https://corona.lmao.ninja/countries/${arg}`);
 	const data = await response.json();
@@ -41,20 +49,38 @@ function getStateData(allData, arg) {
 	else return stateData[0];
 }
 
-function graphData(allHistoricalData, arg) {
+function graphData(allHistoricalData, arg, place=null) {
 	const specifier = {"c": "cases", "d": "deaths", "r": "recovered"}[arg];
 	// initialize array of 0s based on how much data API is giving
 	var chartData = allHistoricalData[0].timeline[specifier].length < 60 ?
 		new Array(allHistoricalData[0].timeline[specifier].length-1).fill(0) :
 		new Array(59).fill(0);
 
-	// loop all possible places
-	for (var i = 0; i < allHistoricalData.length; i++) {
-		// loop as many dates as 60 and add the specifier numbers to date
-		Object.keys(allHistoricalData[i].timeline[specifier]).slice(allHistoricalData[i].timeline[specifier].length - chartData.length, chartData.length).forEach((date, index) => {
-			chartData[index] += parseInt(allHistoricalData[i].timeline[specifier][date]);
+	// state given
+	if (statesMap.filter(element => element.name == place).length > 0) {
+		const stateData = allHistoricalData.filter(element => {
+			if (element.province) {
+				return element.province.toLowerCase() == place;
+			}
+		});
+		Object.keys(stateData[0].timeline[specifier]).slice(stateData[0].timeline[specifier].length - chartData.length, chartData.length).forEach((date, index) => {
+			chartData[index] += parseInt(stateData[0].timeline[specifier][date]);
 		});
 	}
+	// country given
+	else if (countries.indexOf(arg) >= 0) {
+
+	}
+	// no place arg, overall
+	else {
+		for (var i = 0; i < allHistoricalData.length; i++) {
+			// loop as many dates as 60 and add the specifier numbers to date
+			Object.keys(allHistoricalData[i].timeline[specifier]).slice(allHistoricalData[i].timeline[specifier].length - chartData.length, chartData.length).forEach((date, index) => {
+				chartData[index] += parseInt(allHistoricalData[i].timeline[specifier][date]);
+			});
+		}
+	}
+
 	console.log(asciichart.plot(chartData, {height: 22}))
 	console.log(`            Data on ${specifier} the last 60 days`);
 }
@@ -63,19 +89,19 @@ async function main() {
 	// one arg; either country or option
 	if (process.argv.length == 3) {
 		let arg = process.argv[2].toLowerCase()
-		// country
+		// overall country
 		if (countries.indexOf(arg) >= 0) {
 			const data = await processCountryArgument(arg);
 			formatTable(data, null);
 		}
-		// state
+		// overall state
 		else if (statesMap.filter(element => element.abbreviation == arg).length > 0) {
 			const stateName = statesMap.filter(element => element.abbreviation == arg)[0].name;
 			const data = await processAllStates();
 			const stateData = getStateData(data, stateName);
 			formatTable(stateData, null)
 		}
-		// option
+		// overall option
 		else if (options.indexOf(arg) >= 0) {
 			if (arg == "-t") {
 				//go thru all countries and tally new cases
@@ -92,20 +118,12 @@ async function main() {
 				};
 				formatTable(data, arg)
 			}
-			if (arg == "--help") {
-				console.log("");
-				console.log(colors.green("coronatrack:"), colors.white("information on global deaths, death rate, cases, and recovered"));
-				console.log(colors.green("coronatrack {countryName}:"), colors.white("death, death rate, cases, and recovered information for a specific country"));
-				console.log(colors.green("coronatrack {stateName}:"), colors.white("death, death rate, cases, and recovered information for a specific state"));
-				console.log(colors.green("coronatrack -t:"), colors.white("new cases and new deaths. Can be added after countryname/statename arg as well"));
-			}
 			if (arg[0] == "-" && arg[1] == "g") {
-				// last thirty days
-				var chartData = [];
-
 				const allHistoricalData = await processAllHistoricalData();
-				graphData(allHistoricalData.slice(1), arg[2])
-				
+				graphData(allHistoricalData.slice(1), arg[2])	
+			}
+			if (arg == "--help") {
+				outputHelpMenu()
 			}
 		}
 		else console.log("Invalid argument. For help type coronatrack --help");
@@ -113,18 +131,22 @@ async function main() {
 	// two args; country and option or state
 	else if (process.argv.length == 4) {
 		let arg = process.argv[2].toLowerCase()
+		// country with option
 		if (countries.indexOf(arg) >= 0){
 			const data = await processCountryArgument(arg);
 			// TODO -G
 			let arg2 = process.argv[3].toLowerCase();
 			formatTable(data, arg2);
 		}
+		// state with option
 		else if (statesMap.filter(element => element.abbreviation == arg).length > 0) {
 			let arg2 = process.argv[3].toLowerCase();
 			const stateName = statesMap.filter(element => element.abbreviation == arg)[0].name;
 			// -g
-			if (arg2 == "-g") {
+			if (arg2[0] == "-" && arg2[1] == "g") {
 				// processAllHistoricalDat
+				const allHistoricalData = await processAllHistoricalData();
+				graphData(allHistoricalData.slice(1), arg2[2], stateName)
 			}
 			// other options
 			else {
