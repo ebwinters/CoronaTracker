@@ -96,7 +96,7 @@ function graphData(allHistoricalData, arg, place=null) {
 	}
 
 	console.log(asciichart.plot(chartData, {height: 22}))
-	console.log(`            Data on ${specifier} the last 60 days`);
+	console.log(`            Data on ${specifier} in ${place != null ? place : ""} the last 60 days`);
 }
 
 async function main() {
@@ -169,7 +169,7 @@ async function main() {
 			// -g
 			if (arg2[0] == "-" && arg2[1] == "g") {
 				const allHistoricalData = await processAllHistoricalData();
-				graphData(allHistoricalData.slice(1), arg2[2], stateName)
+				graphData(allHistoricalData.slice(1), arg2[2], stateName.toLowerCase())
 			}
 			// other options
 			else {
