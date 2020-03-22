@@ -11,11 +11,11 @@ let options = constants.options, countries = constants.countries, charFormatting
 function graphData(allHistoricalData, arg, place=null) {
 	const specifier = {"c": "cases", "d": "deaths", "r": "recovered"}[arg];
 	// initialize array of 0s based on how much data API is giving, country will not be arr so keep that in mind with cond
-	var chartData = allHistoricalData.length > 0 ? (allHistoricalData[0].timeline[specifier].length < 60 ?
-		new Array(allHistoricalData[0].timeline[specifier].length-1).fill(0) :
-		new Array(59).fill(0)) : (allHistoricalData.timeline[specifier].length < 60 ?
-			new Array(allHistoricalData.timeline[specifier].length-1).fill(0) :
-			new Array(59).fill(0));
+	var chartData = allHistoricalData.length > 0 ? (Object.keys(allHistoricalData[0].timeline[specifier]).length < 60 ?
+		new Array(Object.keys(allHistoricalData[0].timeline[specifier]).length-1).fill(0) :
+		new Array(60).fill(0)) : (Object.keys(allHistoricalData.timeline[specifier]).length < 60 ?
+			new Array(Object.keys(allHistoricalData.timeline[specifier]).length-1).fill(0) :
+			new Array(60).fill(0));
 
 	// state given
 	if (statesMap.filter(element => element.name.toLowerCase() == place).length > 0) {
@@ -24,7 +24,7 @@ function graphData(allHistoricalData, arg, place=null) {
 				return element.province.toLowerCase() == place;
 			}
 		});
-		Object.keys(stateData[0].timeline[specifier]).slice(stateData[0].timeline[specifier].length - chartData.length, chartData.length).forEach((date, index) => {
+		Object.keys(stateData[0].timeline[specifier]).slice(Object.keys(stateData[0].timeline[specifier]).length - chartData.length, chartData.length).forEach((date, index) => {
 			chartData[index] += parseInt(stateData[0].timeline[specifier][date]);
 		});
 	}
@@ -69,7 +69,6 @@ async function main() {
 			if (arg == "-t") {
 				//go through all countries and tally new cases/deaths
 				const data0 = await apiCalls.processAllCountries();
-				data0.map(c => console.log("\"" + c.country.toLocaleLowerCase() + "\"" + ","));
 				const data = helpers.calculateGlobalToday(data0);
 				formatTable(data, arg)
 			}
