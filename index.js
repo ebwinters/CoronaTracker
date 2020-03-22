@@ -69,6 +69,7 @@ async function main() {
 			if (arg == "-t") {
 				//go through all countries and tally new cases/deaths
 				const data0 = await apiCalls.processAllCountries();
+				data0.map(c => console.log("\"" + c.country.toLocaleLowerCase() + "\"" + ","));
 				const data = helpers.calculateGlobalToday(data0);
 				formatTable(data, arg)
 			}
