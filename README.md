@@ -1,3 +1,4 @@
+![](https://david-dm.org/ebwinters/CoronaTracker.svg) [![npm version](https://badge.fury.io/js/coronatrack.svg)](https://badge.fury.io/js/coronatrack) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ebwinters/coronatracker/issues)
 # CoronaTracker
 An application to track corona virus's effects at-a-glance in your terminal
 ## Installation
