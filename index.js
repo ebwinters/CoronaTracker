@@ -10,10 +10,12 @@ let options = constants.options, countries = constants.countries, charFormatting
 
 function graphData(allHistoricalData, arg, place=null) {
 	const specifier = {"c": "cases", "d": "deaths", "r": "recovered"}[arg];
-	// initialize array of 0s based on how much data API is giving
-	var chartData = allHistoricalData[0].timeline[specifier].length < 60 ?
+	// initialize array of 0s based on how much data API is giving, country will not be arr so keep that in mind with cond
+	var chartData = allHistoricalData.length > 0 ? (allHistoricalData[0].timeline[specifier].length < 60 ?
 		new Array(allHistoricalData[0].timeline[specifier].length-1).fill(0) :
-		new Array(59).fill(0);
+		new Array(59).fill(0)) : (allHistoricalData.timeline[specifier].length < 60 ?
+			new Array(allHistoricalData.timeline[specifier].length-1).fill(0) :
+			new Array(59).fill(0));
 
 	// state given
 	if (statesMap.filter(element => element.name.toLowerCase() == place).length > 0) {
@@ -28,20 +30,9 @@ function graphData(allHistoricalData, arg, place=null) {
 	}
 	// country given
 	else if (countries.indexOf(place) >= 0 || place == "us") {
-		// const countryData = allHistoricalData.filter(element => {
-		// 	if (element.country) {
-		// 		return element.country.toLowerCase() == place;
-		// 	}
-		// });
-		console.log(countryData);
-		const countryData = allHistoricalData.filter(element => {
-			if (element.province) {
-				return element.province.toLowerCase() == "us";
-			}
-		});
-		console.log(countryData);
-		console.log("graphing capabilities for countries are coming soon!");
-		process.exit(1);
+		Object.keys(allHistoricalData.timeline[specifier]).slice(allHistoricalData.timeline[specifier].length - chartData.length, chartData.length).forEach((date, index) => {
+			chartData[index] += parseInt(allHistoricalData.timeline[specifier][date]);
+		})
 	}
 	// no place arg, overall
 	else {
@@ -103,7 +94,8 @@ async function main() {
 			// -g
 			if (arg2[0] == "-" && arg2[1] == "g") {
 				const allHistoricalData = await apiCalls.processCountryHistoricalData(arg == "usa" ? "us" : arg);
-				graphData(allHistoricalData.slice(1), arg2[2], arg == "usa" ? "us" : arg)
+				console.log(allHistoricalData);
+				graphData(allHistoricalData, arg2[2], arg == "usa" ? "us" : arg)
 			}
 			// other options
 			else {
