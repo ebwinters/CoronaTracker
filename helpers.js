@@ -10,7 +10,7 @@ function getStateData(allData, arg) {
 		return element.state.toLowerCase() == arg
 	});
 	if (stateData.length !== 1) {
-		throw("invalid argument try coronacheck --help")
+		throw("invalid argument try coronatrack --help")
 	}
 	else return stateData[0];
 }
@@ -20,7 +20,7 @@ function getStateData(allData, arg) {
  */
 function checkArg(arg) {
 	if (options.indexOf(arg) < 0) {
-		console.log("invalid argument try coronacheck --help");
+		console.log("invalid argument try coronatrack --help");
 		process.exit(1)
 	}
 }

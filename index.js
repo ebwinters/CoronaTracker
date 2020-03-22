@@ -58,7 +58,7 @@ async function main() {
 		}
 		// overall state
 		else if (helpers.isValidState(arg)) {
-			const stateName = statesMap.filter(element => element.abbreviation == arg)[0].name;
+			const stateName = statesMap.filter(element => element.abbreviation == arg)[0].name.toLocaleLowerCase();
 			const data = await apiCalls.processAllStates();
 			const stateData = helpers.getStateData(data, stateName);
 			formatTable(stateData, null)
@@ -105,7 +105,7 @@ async function main() {
 		// state with option
 		else if (helpers.isValidState(arg)) {
 			let arg2 = process.argv[3].toLowerCase();
-			const stateName = statesMap.filter(element => element.abbreviation == arg)[0].name;
+			const stateName = statesMap.filter(element => element.abbreviation == arg)[0].name.toLocaleLowerCase();
 			// -g
 			if (arg2[0] == "-" && arg2[1] == "g") {
 				const allHistoricalData = await apiCalls.processAllHistoricalData();
