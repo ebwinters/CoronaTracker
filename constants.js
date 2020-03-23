@@ -240,10 +240,21 @@ const statesMap = [
 ];
 
 const charFormatting = { 
-	'top': colors.white('='), 'top-mid': colors.white('╤') , 'top-left': colors.white('╔') , 'top-right': colors.white('╗'),
-	'bottom': colors.white('═') , 'bottom-mid': colors.white('╧') , 'bottom-left': colors.white('╚') , 'bottom-right': colors.white('╝'),
-	'left': colors.white('║') , 'left-mid': colors.white('╟') , 'mid': colors.white('─') , 'mid-mid': colors.white('┼'),
-	'right': colors.white('║') , 'right-mid': colors.white('╢') , 'middle': colors.white('│')
+    // 'top': colors.white('─'),
+    // 'top-mid': colors.white('┬'),
+    // 'top-left': colors.white('┌'),
+    // 'top-right': colors.white('┐'),
+    // 'bottom': colors.white('─'),
+    // 'bottom-mid': colors.white('┴'),
+    // 'bottom-left': colors.white('└'),
+    // 'bottom-right': colors.white('┘'),
+    // 'left': colors.white('│'),
+    // 'left-mid': colors.white('├'),
+    // 'mid': colors.white('─'),
+    // 'mid-mid': colors.white('┼'),
+    // 'right': colors.white('│'),
+    // 'right-mid': colors.white('┤'),
+    // 'middle': colors.white('│')
 };
 
 const countries = [
