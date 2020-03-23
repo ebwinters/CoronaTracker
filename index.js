@@ -29,7 +29,7 @@ function graphData(allHistoricalData, arg, place=null) {
 		});
 	}
 	// country given
-	else if (countries.indexOf(place) >= 0 || place == "us") {
+	else if (countries.indexOf(helpers.standardizeCountryName(place.toLowerCase())) >= 0) {
 		Object.keys(allHistoricalData.timeline[specifier]).slice(allHistoricalData.timeline[specifier].length - chartData.length, chartData.length).forEach((date, index) => {
 			chartData[index] += parseInt(allHistoricalData.timeline[specifier][date]);
 		})
@@ -52,7 +52,7 @@ async function main() {
 	if (process.argv.length == 3) {
 		let arg = process.argv[2].toLowerCase()
 		// overall country
-		if (countries.indexOf(arg) >= 0) {
+		if (countries.indexOf(helpers.standardizeCountryName(arg.toLowerCase())) >= 0) {
 			const data = await apiCalls.processCountryData(arg);
 			formatTable(data, null);
 		}
@@ -86,16 +86,15 @@ async function main() {
 	else if (process.argv.length == 4) {
 		let arg = process.argv[2].toLowerCase()
 		// country with option
-		if (countries.indexOf(arg) >= 0){
+		if (countries.indexOf(helpers.standardizeCountryName(arg.toLowerCase())) >= 0){
 			const data = await apiCalls.processCountryData(arg);
 			let arg2 = process.argv[3].toLowerCase();
 			// make sure arg2 valid
 			helpers.checkArg(arg2);
 			// -g
 			if (arg2[0] == "-" && arg2[1] == "g") {
-				const allHistoricalData = await apiCalls.processCountryHistoricalData(arg == "usa" ? "us" : arg);
-				console.log(allHistoricalData);
-				graphData(allHistoricalData, arg2[2], arg == "usa" ? "us" : arg)
+				const allHistoricalData = await apiCalls.processCountryHistoricalData(helpers.standardizeCountryName(arg.toLowerCase()));
+				graphData(allHistoricalData, arg2[2], helpers.standardizeCountryName(arg.toLowerCase()))
 			}
 			// other options
 			else {

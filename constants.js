@@ -249,13 +249,13 @@ const charFormatting = {
 const countries = [
     "china", "italy", "usa", "spain", "germany", "iran", "france", "s. korea", "switzerland", "uk", "netherlands", 
     "belgium", "austria", "norway", "sweden", "portugal", "denmark", "canada", "australia", "malaysia", "brazil", 
-    "japan", "czechia", "turkey", "israel", "luxembourg", "ecuador", "ireland", "diamond princess", "pakistan", 
+    "japan", "czech republic", "turkey", "israel", "luxembourg", "ecuador", "ireland", "diamond princess", "pakistan", 
     "chile", "finland", "greece", "thailand", "iceland", "poland", "indonesia", "saudi arabia", "qatar", "singapore", 
     "romania", "slovenia", "india", "philippines", "russia", "bahrain", "estonia", "peru", "hong kong", "egypt", "croatia", 
     "mexico", "lebanon", "panama", "south africa", "iraq", "colombia", "argentina", "serbia", "dominican republic",
     "algeria", "armenia", "kuwait", "bulgaria", "slovakia", "san marino", "taiwan", "uae", "latvia", "uruguay", "hungary", 
     "lithuania", "costa rica", "north macedonia", "faeroe islands", "andorra", "vietnam", "morocco", "jordan", "cyprus",
-    "bosnia and herzegovina", "moldova", "malta", "albania", "brunei", "cambodia", "sri lanka", "belarus", "burkina faso", 
+    "bosnia", "moldova", "malta", "albania", "brunei", "cambodia", "sri lanka", "belarus", "burkina faso", 
     "tunisia", "venezuela", "new zealand", "azerbaijan", "kazakhstan", "palestine", "guadeloupe", "senegal", "oman", "georgia", 
     "trinidad and tobago", "ukraine", "réunion", "uzbekistan", "cameroon", "martinique", "liechtenstein", "afghanistan", 
     "channel islands", "drc", "bangladesh", "guam", "nigeria", "honduras", "mauritius", "bolivia", "puerto rico", "paraguay",
@@ -277,9 +277,24 @@ const options = [
 	"--help",	// help
 ];
 
+const countryMapping = [
+    {possibleNames: ["us", "united states of america", "america", "united states"], standardizedName: "usa"},
+    {possibleNames: ["south korea"], standardizedName: "s. korea"},
+    {possibleNames: ["united kingdom", "england"], standardizedName: "uk"},
+    {possibleNames: ["dr"], standardizedName: "dominican republic"},
+    {possibleNames: ["united arab emirates"], standardizedName: "uae"},
+    {possibleNames: ["bosnia and herzegovina"], standardizedName: "bosnia"},
+    {possibleNames: ["virgin islands"], standardizedName: "u.s. virgin islands"},
+    {possibleNames: ["czechia"], standardizedName: "czech republic"},
+    {possibleNames: ["méxico"], standardizedName: "mexico"},
+    {possibleNames: ["brasil"], standardizedName: "brazil"},
+    {possibleNames: ["panamá"], standardizedName: "panama"},
+];
+
 module.exports = {
     statesMap,
     charFormatting,
     countries,
-    options
+    options,
+    countryMapping
 }
