@@ -17,8 +17,17 @@ function graphData(allHistoricalData, arg, place=null) {
 			new Array(Object.keys(allHistoricalData.timeline[specifier]).length-1).fill(0) :
 			new Array(60).fill(0));
 
+	// no place arg, overall
+	if (place == null) {
+		for (var i = 0; i < allHistoricalData.length; i++) {
+			// loop as many dates as 60 and add the specifier numbers to date
+			Object.keys(allHistoricalData[i].timeline[specifier]).slice(allHistoricalData[i].timeline[specifier].length - chartData.length, chartData.length).forEach((date, index) => {
+				chartData[index] += parseInt(allHistoricalData[i].timeline[specifier][date]);
+			});
+		}
+	}
 	// state given
-	if (statesMap.filter(element => element.name.toLowerCase() == place).length > 0) {
+	else if (statesMap.filter(element => element.name.toLowerCase() == place).length > 0) {
 		const stateData = allHistoricalData.filter(element => {
 			if (element.province) {
 				return element.province.toLowerCase() == place;
@@ -34,15 +43,7 @@ function graphData(allHistoricalData, arg, place=null) {
 			chartData[index] += parseInt(allHistoricalData.timeline[specifier][date]);
 		});
 	}
-	// no place arg, overall
-	else {
-		for (var i = 0; i < allHistoricalData.length; i++) {
-			// loop as many dates as 60 and add the specifier numbers to date
-			Object.keys(allHistoricalData[i].timeline[specifier]).slice(allHistoricalData[i].timeline[specifier].length - chartData.length, chartData.length).forEach((date, index) => {
-				chartData[index] += parseInt(allHistoricalData[i].timeline[specifier][date]);
-			});
-		}
-	}
+	else console.log("Invalid argument. For help type coronatrack --help");
 	console.log(asciichart.plot(chartData, {height: 22}))
 	console.log(`            Data on ${specifier} in ${place != null ? place : ""} the last 60 days`);
 }
