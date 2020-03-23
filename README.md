@@ -1,4 +1,4 @@
-![](https://david-dm.org/ebwinters/CoronaTracker.svg) ![](https://d25lcipzij17d.cloudfront.net/badge.svg?id=js&type=6&v=1.0.18&x2=0) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ebwinters/coronatracker/issues)
+![](https://david-dm.org/ebwinters/CoronaTracker.svg) ![](https://d25lcipzij17d.cloudfront.net/badge.svg?id=js&type=6&v=1.0.20&x2=0) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ebwinters/coronatracker/issues)
 # CoronaTracker
 An application to track corona virus's effects at-a-glance in your terminal
 ## Installation
