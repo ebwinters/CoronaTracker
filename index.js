@@ -24,15 +24,15 @@ function graphData(allHistoricalData, arg, place=null) {
 				return element.province.toLowerCase() == place;
 			}
 		});
-		Object.keys(stateData[0].timeline[specifier]).slice(Object.keys(stateData[0].timeline[specifier]).length - chartData.length, chartData.length).forEach((date, index) => {
+		Object.keys(stateData[0].timeline[specifier]).slice(Object.keys(stateData[0].timeline[specifier]).length - chartData.length, chartData.length+1).forEach((date, index) => {
 			chartData[index] += parseInt(stateData[0].timeline[specifier][date]);
 		});
 	}
 	// country given
 	else if (countries.indexOf(helpers.standardizeCountryName(place.toLowerCase())) >= 0) {
-		Object.keys(allHistoricalData.timeline[specifier]).slice(allHistoricalData.timeline[specifier].length - chartData.length, chartData.length).forEach((date, index) => {
+		Object.keys(allHistoricalData.timeline[specifier]).slice(Object.keys(allHistoricalData.timeline[specifier]).length - chartData.length, chartData.length+1).forEach((date, index) => {
 			chartData[index] += parseInt(allHistoricalData.timeline[specifier][date]);
-		})
+		});
 	}
 	// no place arg, overall
 	else {
