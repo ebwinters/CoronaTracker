@@ -282,7 +282,6 @@ const options = [
     "-t",	// today
     "-gd",    // historical graphs deaths
     "-gc",    // historical graphs cases
-    "-gr",    // historical graphs recovered
 	"--help",	// help
 ];
 

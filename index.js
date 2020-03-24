@@ -71,6 +71,7 @@ async function main() {
 			const stateName = statesMap.filter(element => element.abbreviation == arg)[0].name.toLocaleLowerCase();
 			const data = await apiCalls.processAllStates();
 			const stateData = helpers.getStateData(data, stateName);
+			console.log(stateData)
 			formatTable(stateData, null)
 		}
 		// overall option
@@ -114,19 +115,15 @@ async function main() {
 		// state with option
 		else if (helpers.isValidState(arg)) {
 			let arg2 = process.argv[3].toLowerCase();
-			const stateName = statesMap.filter(element => element.abbreviation == arg)[0].name.toLocaleLowerCase();
-			// -g
-			if (arg2[0] == "-" && arg2[1] == "g") {
-				const allHistoricalData = await apiCalls.processAllHistoricalData();
-				graphData(allHistoricalData.slice(1), arg2[2], stateName.toLowerCase())
-			}
-			// other options
-			else {
+			// today arg
+			if (arg2 == "-t") {
+				const stateName = statesMap.filter(element => element.abbreviation == arg)[0].name.toLocaleLowerCase();
+
 				const data = await apiCalls.processAllStates();
 				const stateData = helpers.getStateData(data, stateName);
 				formatTable(stateData, arg2)
 			}
-			
+			else console.log("invalid argument try coronacheck --help")
 		}
 		else console.log("invalid argument try coronacheck --help")
 	}

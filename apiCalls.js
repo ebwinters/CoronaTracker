@@ -26,13 +26,13 @@ async function processAllStates() {
 }
 
 async function processAllHistoricalData() {
-	const response = await fetch(`https://corona.lmao.ninja/historical`);
+	const response = await fetch(`https://corona.lmao.ninja/v2/historical`);
 	const data = await response.json();
 	return data;
 }
 
 async function processCountryHistoricalData(arg) {
-	const response = await fetch(`https://corona.lmao.ninja/historical/${arg}`);
+	const response = await fetch(`https://corona.lmao.ninja/v2/historical/${arg}`);
 	const data = await response.json();
 	return data;
 }

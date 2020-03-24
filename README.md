@@ -19,10 +19,10 @@ ex: `coronatrack il` `coronatrack nj`
 `coronatrack countryName -t` gives you new cases and new deaths for a specific country, state, or overall.
 ex: `coronatrack china -t` `coronatrack -t` `coronatrack ny -t`
 ### By trend graph
-`coronatrack stateAbbreviation -gd/-gc/-gr` gives you a graph of deaths, cases, or recoveries in a specific state, or overall for the past 60 days.
+`coronatrack stateAbbreviation -gd/-gc` gives you a graph of death or cases in a specific country, or overall for the past 60 days.
 
-ex: `coronatrack ca -gd` would give you a graph of deaths in california while
-`coronatrack -gr` gives a graph of recoveries globally.
+ex: `coronatrack england -gd` would give you a graph of deaths in the UK while
+`coronatrack -gc` gives a graph of recoveries globally.
 ### Help
 `coronatrack --help` gives you a full list of commands.
 ### Country names

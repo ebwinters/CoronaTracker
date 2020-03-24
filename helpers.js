@@ -12,7 +12,10 @@ function getStateData(allData, arg) {
 	if (stateData.length !== 1) {
 		throw("invalid argument try coronatrack --help")
 	}
-	else return stateData[0];
+	else {
+		stateData[0].recovered = stateData[0].cases - stateData[0].deaths - stateData[0].active;
+		return stateData[0];
+	} 
 }
 
 /**
@@ -34,7 +37,7 @@ function outputHelpMenu() {
 	console.log(colors.green("coronatrack {countryName}:"), colors.white("death, death rate, cases, and recovered information for a specific country"));
 	console.log(colors.green("coronatrack {stateName}:"), colors.white("death, death rate, cases, and recovered information for a specific state"));
     console.log(colors.green("coronatrack -t:"), colors.white("new cases and new deaths. Can be added after countryname/statename arg as well"));
-    console.log(colors.green("coronatrack -gd/-gc/-gr:"), colors.white("graphs for deaths/cases/recoveries. Can be added after countryname/statename arg as well"));
+    console.log(colors.green("coronatrack -gd/-gc:"), colors.white("graphs for deaths/cases. Can be added after countryname arg as well"));
 }
 
 /**
