@@ -8,23 +8,32 @@ const helpers = require('./helpers');
 
 let options = constants.options, countries = constants.countries, charFormatting = constants.charFormatting, statesMap = constants.statesMap; 
 
-function graphData(allHistoricalData, arg, place=null) {
+async function graphData(allHistoricalData, arg, place=null) {
 	const specifier = {"c": "cases", "d": "deaths", "r": "recovered"}[arg];
 	// initialize array of 0s based on how much data API is giving, country will not be arr so keep that in mind with cond
-	var chartData = allHistoricalData.length > 0 ? (Object.keys(allHistoricalData[0].timeline[specifier]).length < 60 ?
-		new Array(Object.keys(allHistoricalData[0].timeline[specifier]).length-1).fill(0) :
-		new Array(60).fill(0)) : (Object.keys(allHistoricalData.timeline[specifier]).length < 60 ?
-			new Array(Object.keys(allHistoricalData.timeline[specifier]).length-1).fill(0) :
-			new Array(60).fill(0));
+	var chartData = new Array(60).fill(0);
 
 	// no place arg, overall
 	if (place == null) {
-		for (var i = 0; i < allHistoricalData.length; i++) {
-			// loop as many dates as 60 and add the specifier numbers to date
-			Object.keys(allHistoricalData[i].timeline[specifier]).slice(allHistoricalData[i].timeline[specifier].length - chartData.length, chartData.length).forEach((date, index) => {
-				chartData[index] += parseInt(allHistoricalData[i].timeline[specifier][date]);
+		//special case USA
+		const usData = await apiCalls.processCountryHistoricalData("usa");
+		Object.keys(usData.timeline[specifier]).slice(Object.keys(usData.timeline[specifier]).length - 60, Object.keys(usData.timeline[specifier]).length).forEach((date, index) => {
+			chartData[index] += parseInt(usData.timeline[specifier][date]);
+		});
+		// loop rest of countries 
+		constants.countries.map(country => {
+			allHistoricalData.map(obj => {
+				const standardizedCountryName = helpers.standardizeCountryName(obj.country.toLowerCase());
+				if ((obj.province == null && standardizedCountryName == country) ||
+					(obj.province != null && standardizedCountryName == country && helpers.standardizeCountryName(obj.province.toLowerCase()) == country)) {
+					// single entry country
+					Object.keys(obj.timeline[specifier]).slice(Object.keys(obj.timeline[specifier]).length - 60, Object.keys(obj.timeline[specifier]).length).forEach((date, index) => {
+						chartData[index] += parseInt(obj.timeline[specifier][date]);
+					});
+				}
 			});
-		}
+
+		})
 	}
 	// state given
 	else if (statesMap.filter(element => element.name.toLowerCase() == place).length > 0) {
@@ -33,13 +42,13 @@ function graphData(allHistoricalData, arg, place=null) {
 				return element.province.toLowerCase() == place;
 			}
 		});
-		Object.keys(stateData[0].timeline[specifier]).slice(Object.keys(stateData[0].timeline[specifier]).length - chartData.length, chartData.length+1).forEach((date, index) => {
+		Object.keys(stateData[0].timeline[specifier]).slice(Object.keys(stateData[0].timeline[specifier]).length - 60, Object.keys(stateData[0].timeline[specifier]).length).forEach((date, index) => {
 			chartData[index] += parseInt(stateData[0].timeline[specifier][date]);
 		});
 	}
 	// country given
 	else if (countries.indexOf(helpers.standardizeCountryName(place.toLowerCase())) >= 0) {
-		Object.keys(allHistoricalData.timeline[specifier]).slice(Object.keys(allHistoricalData.timeline[specifier]).length - chartData.length, chartData.length+1).forEach((date, index) => {
+		Object.keys(allHistoricalData.timeline[specifier]).slice(Object.keys(allHistoricalData.timeline[specifier]).length - 60, Object.keys(allHistoricalData.timeline[specifier]).length).forEach((date, index) => {
 			chartData[index] += parseInt(allHistoricalData.timeline[specifier][date]);
 		});
 	}

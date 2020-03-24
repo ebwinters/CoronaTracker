@@ -1,5 +1,3 @@
-var colors = require('colors');
-
 const statesMap = [
     {
         "name": "alabama",
@@ -300,6 +298,7 @@ const countryMapping = [
     {possibleNames: ["méxico"], standardizedName: "mexico"},
     {possibleNames: ["brasil"], standardizedName: "brazil"},
     {possibleNames: ["panamá"], standardizedName: "panama"},
+    {possibleNames: ["the gambia"], standardizedName: "gambia"}
 ];
 
 module.exports = {
