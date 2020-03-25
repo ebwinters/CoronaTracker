@@ -9,7 +9,7 @@ const helpers = require('./helpers');
 let options = constants.options, countries = constants.countries, charFormatting = constants.charFormatting, statesMap = constants.statesMap; 
 
 async function graphData(allHistoricalData, arg, place=null) {
-	const specifier = {"c": "cases", "d": "deaths", "r": "recovered"}[arg];
+	const specifier = {"c": "cases", "d": "deaths"}[arg];
 	// initialize array of 0s based on how much data API is giving, country will not be arr so keep that in mind with cond
 	var chartData = new Array(60).fill(0);
 
